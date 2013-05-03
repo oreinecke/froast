@@ -94,11 +94,11 @@ int settings(int argc, char *argv[], char *envp[]) {
 			else settings.read(&inFile);
 		} else if (inFileName.EndsWith(".rootrc")) {
 			settings.read(inFileName);
-		} else if (inFileName=="-" || inFileName.EndsWith("/stdin")) {
+		} else if (inFileName=="-" && jsonOutput) {
 			// yes this isn't super-safe for instance on ./stdin but who would name a file 'stdin'????
 			settings.read(TString("/dev/stdin"));
-		} else if (inFileName.EndsWith(".json")) {
-			ifstream in(inFileName.Data());
+		} else if (inFileName.EndsWith(".json") || inFileName=="-" && !jsonOutput) {
+			ifstream in(inFileName=="-"?"/dev/stdin":inFileName.Data());
 			THashList *nested = JSON::read(in);
 			settings.importNested(nested);
 			delete nested;
